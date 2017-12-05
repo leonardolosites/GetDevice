@@ -22,7 +22,7 @@
 						<th>**</th>
 					</tr>
 				</thead>
-				<tbody>		
+				<tbody>
 					<?php include("/controller/lista-agendamentos.php");?>
 				</tbody>
 			</table>

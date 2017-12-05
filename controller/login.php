@@ -1,3 +1,51 @@
+<?php
+
+include_once 'bd/conexao.php';
+
+if(isset($_POST['acao']) && $_POST['acao'] == "Entrar"){
+
+	$usuario = filter_input(INPUT_POST, 'usuario');
+	$senha = filter_input(INPUT_POST, 'senha');
+	$senha = sha1(base64_encode($senha."@".$usuario));
+
+	$dados = array(
+
+		':usuario' => $usuario,
+		':senha' => $senha
+
+	);
+
+	$query = ("SELECT * FROM usuario WHERE usuario_usuario = :usuario AND senha_usuario = :senha");
+
+	$result = $conn->prepare($query);
+	$result->execute($dados);
+
+		if($result->rowCount() > 0 ){
+			session_start();
+
+			foreach ($result as $key) {
+				$userType = $key['tipo_usuario'];
+				$userId = $key['id_usuario'];
+				$instId = $key['instituicao_id_instituicao'];
+				$userNameFull = $key['nome_usuario']." ".$key['sobrenome_usuario'];
+			}
+
+			$_SESSION['autenticado'] = true;
+			$_SESSION['id_usuario'] = $userId;
+			$_SESSION['tipo_usuario'] = $userType;
+			$_SESSION['id_instituicao'] = $instId;
+			$_SESSION['nomeCompleto'] = $userNameFull;
+
+			header("Location: /");
+
+		}else{
+
+			echo '<br>'.mensagem("Nenhum registro com esses dados foi encontrado no sistema.", "danger");
+
+		}
+	}
+
+?>
 <form method="post" action="" name="formLogin">
 	<div class="d-flex flex-column">
 		<label class="col text-center my-4">
@@ -56,52 +104,3 @@
 		</form>
 	</div>
 </div>
-
-<?php
-
-include_once 'bd/conexao.php';
-
-if(isset($_POST['acao']) && $_POST['acao'] == "Entrar"){
-
-	$usuario = filter_input(INPUT_POST, 'usuario');
-	$senha = filter_input(INPUT_POST, 'senha');
-	$senha = sha1(base64_encode($senha."@".$usuario));
-
-	$dados = array(
-
-		':usuario' => $usuario,
-		':senha' => $senha
-
-	);
-
-	$query = ("SELECT * FROM usuario WHERE usuario_usuario = :usuario AND senha_usuario = :senha");
-
-	$result = $conn->prepare($query);
-	$result->execute($dados);
-
-		if($result->rowCount() > 0 ){
-			session_start();
-
-			foreach ($result as $key) {
-				$userType = $key['tipo_usuario'];
-				$userId = $key['id_usuario'];
-				$instId = $key['instituicao_id_instituicao'];
-				$userNameFull = $key['nome_usuario']." ".$key['sobrenome_usuario'];
-			}
-
-			$_SESSION['autenticado'] = true;
-			$_SESSION['id_usuario'] = $userId;
-			$_SESSION['tipo_usuario'] = $userType;
-			$_SESSION['id_instituicao'] = $instId;
-			$_SESSION['nomeCompleto'] = $userNameFull;
-
-			header("Location: ?page=home");
-
-		}else{
-
-			echo '<br>'.mensagem("Nenhum registro com esses dados foi encontrado no sistema.", "danger");
-
-		}
-	}
-
-?>

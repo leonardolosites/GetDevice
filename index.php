@@ -1,3 +1,58 @@
+<?php
+	session_start();
+
+	if(isset($_SESSION['autenticado'])){
+		include(__DIR__."/controller/functions.php");
+		$userNameFull = $_SESSION['nomeCompleto'];
+		$userType = $_SESSION['tipo_usuario'];
+		$userId = $_SESSION['id_usuario'];
+		$id_instituicao = $_SESSION['id_instituicao'];
+
+		require_once(__DIR__."/bd/conexao.php");
+		try {
+			$consulta_1 = "SELECT * FROM instituicao WHERE id_instituicao = {$id_instituicao}";
+			$instituicao = $conn->query($consulta_1)->fetch();
+
+			$nome_instituicao = $instituicao['nome_instituicao'];
+			$informacoes = $userNameFull." - ".$nome_instituicao;
+
+		} catch (Exception $e) {
+			echo "Erro ao buscar os dados da instituição!<br>Detalhes: ".$e->getMessage();
+		}
+
+		$menu = '
+		<li class="nav-item active">
+			<a class="nav-link" href="?page=home">Minha Página</a>
+		</li>';
+
+		$menu .= ($userType == 1 ?
+		'<li class="nav-item dropdown">
+			<a class="nav-link dropdown-toggle" href="#" id="idTools" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Gerenciar</a>
+			<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+				<a class="dropdown-item" href="?page=instituicoes">Instituição</a>
+				<a class="dropdown-item" href="?page=usuarios">Usuário</a>
+			</div>
+		</li>': '');
+
+		$menu .= '
+		<li class="nav-item navbar-toggler-right">
+			<a class="nav-link" data-toggle="modal" data-target="#modalSair" href="">Sair</a>
+		</li>
+		';
+
+		if(isset($_POST['sair'])){
+			$menu  = '';
+			unset($_SESSION['autenticado']);
+			session_destroy();
+			header("Location: /");
+		}
+
+
+	}else{
+		session_destroy();
+		$menu ='';
+	}
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -11,61 +66,6 @@
 
 </head>
 	<body">
-
-	<?php
-		session_start();
-
-		if(isset($_SESSION['autenticado'])){
-			include(__DIR__."/controller/functions.php");
-			$userNameFull = $_SESSION['nomeCompleto'];
-			$userType = $_SESSION['tipo_usuario'];
-			$userId = $_SESSION['id_usuario'];
-			$id_instituicao = $_SESSION['id_instituicao'];
-
-			require_once(__DIR__."/bd/conexao.php");
-			try {
-				$consulta_1 = "SELECT * FROM instituicao WHERE id_instituicao = {$id_instituicao}";
-				$instituicao = $conn->query($consulta_1)->fetch();
-
-				$nome_instituicao = $instituicao['nome_instituicao'];
-				$informacoes = $userNameFull." - ".$nome_instituicao;
-
-			} catch (Exception $e) {
-				echo "Erro ao buscar os dados da instituição!<br>Detalhes: ".$e->getMessage();
-			}
-
-			$menu = '
-			<li class="nav-item active">
-				<a class="nav-link" href="?page=home">Minha Página</a>
-			</li>';
-
-			$menu .= ($userType == 1 ?
-			'<li class="nav-item dropdown">
-				<a class="nav-link dropdown-toggle" href="#" id="idTools" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Gerenciar</a>
-				<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-					<a class="dropdown-item" href="?page=cadastrar-instituicao">Instituição</a>
-					<a class="dropdown-item" href="?page=cadastrar-usuario">Usuário</a>
-				</div>
-			</li>': '');
-
-			$menu .= '
-			<li class="nav-item navbar-toggler-right">
-				<a class="nav-link" data-toggle="modal" data-target="#modalSair" href="">Sair</a>
-			</li>
-			';
-
-			if(isset($_POST['sair'])){
-				unset($_SESSION['autenticado']);
-				session_destroy();
-				header("Location: /");
-			}
-
-
-		}else{
-			session_destroy();
-			$menu ='';
-		}
-	?>
 
 	<nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse">
 
@@ -84,7 +84,7 @@
 
 	</nav>
 
-	<div id="modalSair" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" data-backdrop="static">
+	<div id="modalSair" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
 		<div class="modal-dialog modal-sm">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -106,6 +106,31 @@
 		</div>
 	</div>
 
+    <div id="modalConfirma" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmação</h5>
+                </div>
+                <div class="modal-body">
+                    <p>Tem certeza?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btnSimConfirmacao" class="btn btn-primary">Sim</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Não</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalCarregando" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-body">
+                <img src="images/loading2.gif" alt="Carregando" width="100%">
+            </div>
+        </div>
+    </div>
+
 	<div class="container">
 	<div id="retorno" class="mt-3"></div>
 
@@ -118,9 +143,33 @@
 				case 'home':
 					include($_SERVER['DOCUMENT_ROOT'].'/controller/home.php');
 				break;
+				case 'email-ativado':
+					include($_SERVER['DOCUMENT_ROOT'].'/pages/email-ativado.php');
+				break;
 				case 'cadastrar-usuario':
 					if($userType == 1){
 						include($_SERVER['DOCUMENT_ROOT'].'/pages/novo-usuario.php');
+					}else{
+						include($_SERVER['DOCUMENT_ROOT'].'/controller/home.php');
+					}
+				break;
+				case 'usuarios':
+					if($userType == 1){
+						include($_SERVER['DOCUMENT_ROOT'].'/pages/usuarios.php');
+					}else{
+						include($_SERVER['DOCUMENT_ROOT'].'/controller/home.php');
+					}
+				break;
+				case 'nova-instituicao':
+					if($userType == 1){
+						include($_SERVER['DOCUMENT_ROOT'].'/pages/nova-instituicao.php');
+					}else{
+						include($_SERVER['DOCUMENT_ROOT'].'/controller/home.php');
+					}
+				break;
+				case 'instituicoes':
+					if($userType == 1){
+						include($_SERVER['DOCUMENT_ROOT'].'/pages/instituicoes.php');
 					}else{
 						include($_SERVER['DOCUMENT_ROOT'].'/controller/home.php');
 					}

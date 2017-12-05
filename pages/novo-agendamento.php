@@ -59,11 +59,4 @@
 			<a href="/?page=agendamentos" class="btn btn-warning col-12">Ver Agendamentos</a>
 		</div>
 	</div>
-    <div id="modalCarregando" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
-        <div class="modal-dialog modal-sm">
-            <div class="modal-body">
-                <img src="images/loading2.gif" alt="Carregando" width="100%">
-            </div>
-        </div>
-    </div>
 </div>
