@@ -24,13 +24,13 @@
 			if($user['status_usuario'] == 1){
 				$lista .= "
 					<td>Habilitado</td>
-					<td><button type='button' onclick='statusUser({$user['id_usuario']}, {$id_instituicao}, 'disable');' class='btn btn-sm btn-danger w-100'>Desabilitar</button></td>
-					<td><button type='button' onclick='editUser({$user['id_usuario']}, {$id_instituicao});' class='btn btn-sm btn-info w-100'>Editar</button></td>";
+					<td><button type='button' onclick=\"statusUser({$user['id_usuario']}, {$id_instituicao}, 'disable');\" class='btn btn-sm btn-danger w-100'>Desabilitar</button></td>
+					<td><button type='button' onclick=\"editUser({$user['id_usuario']}, {$id_instituicao});\" class='btn btn-sm btn-info w-100'>Editar</button></td>";
 			}else{
 				$lista .= "
 					<td>Desabilitado</td>
-					<td><button type='button' onclick='statusUser({$user['id_usuario']}, {$id_instituicao}, 'enable');' class='btn btn-sm btn-success w-100'>Habilitar</button></td>
-					<td><button type='button' onclick='editUser({$user['id_usuario']}, {$id_instituicao});' class='btn btn-sm btn-info w-100'>Editar</button></td>";
+					<td><button type='button' onclick=\"statusUser({$user['id_usuario']}, {$id_instituicao}, 'enable');\" class='btn btn-sm btn-success w-100'>Habilitar</button></td>
+					<td><button type='button' onclick=\"editUser({$user['id_usuario']}, {$id_instituicao});\" class='btn btn-sm btn-info w-100'>Editar</button></td>";
 			}
 
 			$lista .= "</tr>";

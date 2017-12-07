@@ -14,7 +14,7 @@
 			<table class="table-bordered table-striped table">
 				<thead>
 					<tr>
-						<th>Código</th>
+						<th>Usuário</th>
 						<th>Dispositivos</th>
 						<th>Data Agendada</th>
 						<th>Hora Inicial</th>

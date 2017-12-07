@@ -38,3 +38,20 @@
 	</div>
 
 </div>
+
+<div id="modalConfirmacao" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Confirmação</h5>
+			</div>
+			<div class="modal-body">
+				<p class="text-center">Deseja realmente prosseguir com esta ação?</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" id="btnSim" class="btn btn-primary">Sim</button>
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Não</button>
+			</div>
+			</div>
+	</div>
+</div>

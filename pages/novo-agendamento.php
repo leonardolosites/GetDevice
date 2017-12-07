@@ -13,7 +13,7 @@
 		<div class="form-group col-12 col-lg-3">
 			<label for="quantidadeDispositivosAgendamento">Quer quantos dispositivos?</label>
 			<select class="form-control col-12" name="quantidadeDispositivosAgendamento" id="quantidadeDispositivosAgendamento">
-				<?php 
+				<?php
 					$sqlLista = "SELECT dispositivos_disponiveis_instituicao FROM instituicao WHERE id_instituicao = {$id_instituicao}"; 
 
 					try {
@@ -24,7 +24,7 @@
 						for($i = 0; $i <= $total['dispositivos_disponiveis_instituicao']; $i++){
 							$lista .= '<option value="'.$i.'">'.$i.'</option>';
 						}
-						
+
 						echo $lista;
 
 					} catch (Exception $e) {
@@ -34,17 +34,17 @@
 				?>
 			</select>
 		</div>
-	
+
 		<div class="form-group col-12 col-lg-3">
 			<label for="dataAgendamento">Em que data?</label>
 			<input required type="date" class="form-control col-12" name="dataAgendamento" id="dataAgendamento">
 		</div>
-	
+
 		<div class="form-group col-12 col-lg-3">
 			<label for="horaInicioAgendamento">E qual horário?</label>
 			<input required type="time" class="form-control col-12" name="horaInicioAgendamento" id="horaInicioAgendamento">
 		</div>
-	
+
 		<div class="form-group col-12 col-lg-3">
 			<label for="horaFimAgendamento">Até que horas?</label>
 			<input required type="time" class="form-control col-12" name="horaFimAgendamento" id="horaFimAgendamento">

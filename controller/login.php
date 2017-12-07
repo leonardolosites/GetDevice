@@ -1,6 +1,7 @@
 <?php
 
 include_once 'bd/conexao.php';
+include_once 'controller/functions.php';
 
 if(isset($_POST['acao']) && $_POST['acao'] == "Entrar"){
 
@@ -22,21 +23,25 @@ if(isset($_POST['acao']) && $_POST['acao'] == "Entrar"){
 
 		if($result->rowCount() > 0 ){
 			session_start();
+			$key = $result->fetch();
 
-			foreach ($result as $key) {
+			$userStatus = $key['status_usuario'];
+			if($userStatus == 0){
+				echo '<br>'.mensagem("<h4>Sua conta ainda não foi ativada</h4>Acesse a caixa de entrada do e-mail fornecido para cadastro e verifique se existe um e-mail<br>com o título <b>Novo Usuário Cadastrado</b>, do remetente <i>contato.getdevice@gmail.com</i> e siga as instruções. <br><br><small>Caso não encontre o e-mail, procure o setor de T.I da sua instituição.</small>", "info");
+			}else{
 				$userType = $key['tipo_usuario'];
 				$userId = $key['id_usuario'];
 				$instId = $key['instituicao_id_instituicao'];
 				$userNameFull = $key['nome_usuario']." ".$key['sobrenome_usuario'];
+
+				$_SESSION['autenticado'] = true;
+				$_SESSION['id_usuario'] = $userId;
+				$_SESSION['tipo_usuario'] = $userType;
+				$_SESSION['id_instituicao'] = $instId;
+				$_SESSION['nomeCompleto'] = $userNameFull;
+
+				header("Location: /");
 			}
-
-			$_SESSION['autenticado'] = true;
-			$_SESSION['id_usuario'] = $userId;
-			$_SESSION['tipo_usuario'] = $userType;
-			$_SESSION['id_instituicao'] = $instId;
-			$_SESSION['nomeCompleto'] = $userNameFull;
-
-			header("Location: /");
 
 		}else{
 

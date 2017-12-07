@@ -136,7 +136,7 @@ function emailNovoAgendamentoAdmin($conn, $qnt, $data, $horaInicial, $horaFinal,
     if($mail->Send()){
       return true;
     }
-
+    // return true;
 	}catch (Exception $e) {
     	echo 'Mailer Error: ' . $mail->ErrorInfo;
       return false;
@@ -259,7 +259,125 @@ function emailNovoAgendamentoUser($conn, $qnt, $data, $horaInicial, $horaFinal, 
     if($mail->Send()){
       return true;
     }
+    // return true;
+  }catch (Exception $e) {
+      echo 'Mailer Error: ' . $mail->ErrorInfo;
+      return false;
+  }
 
+}
+/*Email que o admin recebe quando o usuario cancela o agendameto*/
+function emailCancelaAgd($conn, $idAgd, $userId){
+  date_default_timezone_set('America/Sao_Paulo');
+
+  $dadosUserLogado = $conn->query("SELECT * FROM usuario u INNER JOIN instituicao i ON u.instituicao_id_instituicao = i.id_instituicao WHERE id_usuario = {$userId}")->fetch();
+
+  $nome_usuarioLog = $dadosUserLogado['nome_usuario']." ".$dadosUserLogado['sobrenome_usuario'];
+  $email_usuarioLog = $dadosUserLogado['email_usuario'];
+  $id_instituicao = $dadosUserLogado['id_instituicao'];
+  
+  $assunto = 'Agendamento Cancelado';
+
+  $dataAtual = date('d/m/Y', time());
+  $horaAtual = date('H:i', time());
+
+  $mensagem = "<b><h3>".$assunto."</h3></b>";
+
+  $mensagem .= "<br>O agendamento de número ".$idAgd." foi cancelado.";
+
+  //echo $mensagem;
+
+/*------------CONFIGURACOES PARA ENVIAR O E-MAIL-----------------------------*/
+
+  try {
+        //Create a new PHPMailer instance
+        $mail = new PHPMailer;
+
+//Tell PHPMailer to use SMTP
+        $mail->isSMTP();
+
+//Enable SMTP debugging
+        $mail->SMTPDebug = 0;
+
+//Set the hostname of the mail server
+        $mail->Host = 'smtp.gmail.com';
+
+//Set the SMTP port number - 587 for authenticated TLS, a.k.a. RFC4409 SMTP submission
+        $mail->Port = 587;
+
+//Set the encryption system to use - ssl (deprecated) or tls
+        $mail->SMTPSecure = 'tls';
+
+//Whether to use SMTP authentication
+        $mail->SMTPAuth = true;
+
+//Set AuthType to use XOAUTH2
+        $mail->AuthType = 'XOAUTH2';
+
+//Fill in authentication details here
+//Either the gmail account owner, or the user that gave consent
+        $email = 'contato.getdevice@gmail.com';
+        $clientId = '806470247310-2o8d1c3u0pd1buq6ngno7ni07c3qgi4m.apps.googleusercontent.com';
+        $clientSecret = 'KFdMUbK9Xeqbm6OYhi3rAJwM';
+
+//Obtained by configuring and running get_oauth_token.php
+//after setting up an app in Google Developer Console.
+        $refreshToken = '1/mch9gDWKttGutzvmfGGJVWhcQIAOmPLydujTQAwRn9DyFNLmlsNOzWryTxDmW5Oy';
+
+//Create a new OAuth2 provider instance
+        $provider = new Google(
+            [
+                'clientId' => $clientId,
+                'clientSecret' => $clientSecret,
+            ]
+        );
+
+//Pass the OAuth provider instance to PHPMailer
+        $mail->setOAuth(
+            new OAuth(
+                [
+                    'provider' => $provider,
+                    'clientId' => $clientId,
+                    'clientSecret' => $clientSecret,
+                    'refreshToken' => $refreshToken,
+                    'userName' => $email,
+                ]
+            )
+        );
+        $mail->SMTPOptions = array(
+            'ssl' => array(
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+                'allow_self_signed' => true
+            )
+        );
+
+    $mail->Debugoutput = 'html';
+    $mail->CharSet = 'utf-8';
+    $mail->WordWrap = 80;
+    $mail->setLanguage('br');
+
+    //Recipients
+    $mail->SetFrom($email, "Contato Get Device");
+    $mail->AddReplyTo($email_usuarioLog, $nome_usuarioLog);
+    
+    $listAdmin = $conn->query("SELECT nome_usuario, email_usuario FROM usuario WHERE tipo_usuario = 1 AND instituicao_id_instituicao = {$id_instituicao}");
+
+    $mail->AddAddress($email_usuarioLog, $nome_usuarioLog);
+
+    foreach ($listAdmin as $dadosAdmin) {
+      $mail->AddAddress($dadosAdmin['email_usuario'], $dadosAdmin['nome_usuario']);
+    }
+
+    //Content
+    $mail->isHTML(true);
+    $mail->Subject = $assunto;
+    $mail->MsgHTML($mensagem);
+
+    if($mail->Send()){
+      return true;
+    }
+    // return true;
   }catch (Exception $e) {
       echo 'Mailer Error: ' . $mail->ErrorInfo;
       return false;
@@ -267,14 +385,12 @@ function emailNovoAgendamentoUser($conn, $qnt, $data, $horaInicial, $horaFinal, 
 
 }
 
-
-
 function emailLinkAtivacao($conn, $code, $email_usuario, $nome_usuario){
   date_default_timezone_set('America/Sao_Paulo');
 
   $assunto = 'Novo Usuário Cadastrado';
 
-  $link = '<a href="http://losites.com.br/gd/confirmando-email.php?code='.$code.'&v">aqui</a>';
+  $link = '<a href="http://localhost:8080/confirmando-email.php?code='.$code.'&v">aqui</a>';
 
   $dataAtual = date('d/m/Y', time());
   $horaAtual = date('H:i', time());
@@ -374,7 +490,7 @@ function emailLinkAtivacao($conn, $code, $email_usuario, $nome_usuario){
     if($mail->Send()){
       return true;
     }
-
+    // return true;
   }catch (Exception $e) {
       echo 'Mailer Error: ' . $mail->ErrorInfo;
       return false;
