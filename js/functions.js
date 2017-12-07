@@ -19,7 +19,15 @@ function validaUser(user){
 	}
 }
 /*Valida campos de formulario*/
-function validaCampo(campo, msg, type = 'text', alert = 'warning'){
+function validaCampo(campo, msg, type, alert){
+	if(type === null){
+		type = 'text';
+	}
+
+    if(alert === null){
+        type = 'warning';
+    }
+
 	var pai = $(campo).parent();
 	var valor = $(campo).val();
 	var label = pai.find(".form-control-feedback");
@@ -231,15 +239,19 @@ function statusUser(id_usuario, id_instituicao, acao){
 				"id_usuario="+id_usuario+"&id_instituicao="+id_instituicao+"&acao=1",
 				function (retorno) {
 					if(retorno == 'ok'){
-						$("#retorno").empty();
-						$("#retorno").append(mensagem("Usuário habilitado com sucesso!", "success"));
+						// noinspection JSJQueryEfficiency
+                        $("#retorno").empty();
+						// noinspection JSJQueryEfficiency
+                        $("#retorno").append(mensagem("Usuário habilitado com sucesso!", "success"));
 						window.setTimeout(function(){
 							location.reload();
 						}, 2000);
 						$("#modalConfirmacao").modal('toggle');
 					}else{
-						$("#retorno").empty();
-						$("#retorno").append(mensagem("Não foi possível habilitar o usuário!<br>Detalhes:"+retorno, "danger"));
+						// noinspection JSJQueryEfficiency
+                        $("#retorno").empty();
+						// noinspection JSJQueryEfficiency
+                        $("#retorno").append(mensagem("Não foi possível habilitar o usuário!<br>Detalhes:"+retorno, "danger"));
 						window.setTimeout(function(){
 							location.reload();
 						}, 10000);
@@ -252,15 +264,19 @@ function statusUser(id_usuario, id_instituicao, acao){
 				"id_usuario="+id_usuario+"&id_instituicao="+id_instituicao+"&acao=0",
 				function (retorno) {
 					if(retorno == 'ok'){
-						$("#retorno").empty();
-						$("#retorno").append(mensagem("Usuário desabilitado com sucesso!", "success"));
+						// noinspection JSJQueryEfficiency
+                        $("#retorno").empty();
+						// noinspection JSJQueryEfficiency
+                        $("#retorno").append(mensagem("Usuário desabilitado com sucesso!", "success"));
 						window.setTimeout(function(){
 							location.reload();
 						}, 2000);
 						$("#modalConfirmacao").modal('toggle');
 					}else{
-						$("#retorno").empty();
-						$("#retorno").append(mensagem("Não foi possível desabilitar o usuário!<br>Detalhes:"+retorno, "danger"));
+						// noinspection JSJQueryEfficiency
+                        $("#retorno").empty();
+						// noinspection JSJQueryEfficiency
+                        $("#retorno").append(mensagem("Não foi possível desabilitar o usuário!<br>Detalhes:"+retorno, "danger"));
 						window.setTimeout(function(){
 							location.reload();
 						}, 10000);
@@ -273,23 +289,29 @@ function statusUser(id_usuario, id_instituicao, acao){
 
 
 function cancelaAgd(id, idInst, idUser){
-	$("#modalConfirmacao").modal('toggle');
-	$("#modalConfirmacao").on('shown.bs.modal', function () {
+	// noinspection JSJQueryEfficiency
+    $("#modalConfirmacao").modal('toggle');
+	// noinspection JSJQueryEfficiency
+    $("#modalConfirmacao").on('shown.bs.modal', function () {
 		$("#btnSim").click(function() {
 			$.post(
 				"/controller/cancela-agendamento.php",
 				"id="+id+"&id_instituicao="+idInst+"&idUser="+idUser,
 				function (retorno) {
 					if(retorno == 'ok'){
-						$("#retorno").empty();
-						$("#retorno").append(mensagem("Agendamento cancelado com sucesso!", "success"));
+						// noinspection JSJQueryEfficiency
+                        $("#retorno").empty();
+						// noinspection JSJQueryEfficiency
+                        $("#retorno").append(mensagem("Agendamento cancelado com sucesso!", "success"));
 						window.setTimeout(function(){
 							location.reload();
 						}, 2000);
 						$("#modalConfirmacao").modal('toggle');
 					}else{
-						$("#retorno").empty();
-						$("#retorno").append(mensagem("Não foi possível cancelar o agendamento!<br>Detalhes:"+retorno, "danger"));
+						// noinspection JSJQueryEfficiency
+                        $("#retorno").empty();
+						// noinspection JSJQueryEfficiency
+                        $("#retorno").append(mensagem("Não foi possível cancelar o agendamento!<br>Detalhes:"+retorno, "danger"));
 						window.setTimeout(function(){
 							location.reload();
 						}, 10000);
@@ -301,7 +323,8 @@ function cancelaAgd(id, idInst, idUser){
 }
 /*Insere um usuário no banco*/
 function insereUser(){
-	$("#retorno").empty();
+	// noinspection JSJQueryEfficiency
+    $("#retorno").empty();
 	var nome = $("#nome").val();
 	var sobrenome = $("#sobrenome").val();
 	var email = $("#email").val();
@@ -312,9 +335,9 @@ function insereUser(){
 	var tipo = $("#tipo").val();
 	var id_inst = $("#id_inst").val();
 
-	if(nome == '' || sobrenome == '' || email == '' || c_email == '' || usuario  == '' || senha  == '' || c_senha  == '' || tipo  == '0' || id_inst == '0'){
+	if(nome === '' || sobrenome === '' || email === '' || c_email === '' || usuario  === '' || senha  === '' || c_senha  === '' || tipo  === '0' || id_inst === '0'){
 		$(".form-control").each(function(){
-			if($(this).val() == ''){
+			if($(this).val() === ''){
 				$(this).focus();
 				return false;
 			}
@@ -327,7 +350,7 @@ function insereUser(){
 			"cadastrar&nome="+nome+"&sobrenome="+sobrenome+"&email="+email+"&usuario="+usuario+"&senha="+senha+"&tipo="+tipo+"&id_inst="+id_inst,
 			function (result) {
                 $("#modalCarregando").modal('toggle');
-				if(result == 'ok'){
+				if(result === 'ok'){
 					$("#retorno").append(mensagem("Usuário cadastrado com sucesso!", "success"));
 					window.setTimeout(function(){
 						location.href="?page=usuarios";
@@ -348,18 +371,26 @@ function insereAgd(idUser, idInst){
 	var horaInicio = $("#horaInicioAgendamento").val();
 	var horaFim = $("#horaFimAgendamento").val();
 
-	if(qnt == 0){
-		$("#retorno").empty();
-		$("#retorno").append(mensagem("Informe a quantidade de dispositivos!", "info"));
-	}else if(data == ''){
-		$("#retorno").empty();
-		$("#retorno").append(mensagem("Informe uma data para o agendamento!", "warning"));
-	}else if(horaInicio == ''){
-		$("#retorno").empty();
-		$("#retorno").append(mensagem("Informe o horário inicial do agendamento!", "info"));
-	}else if(horaFim == ''){
-		$("#retorno").empty();
-		$("#retorno").append(mensagem("Informe o horário final do agendamento!", "warning"));
+	if(qnt === 0){
+		// noinspection JSJQueryEfficiency
+        $("#retorno").empty();
+		// noinspection JSJQueryEfficiency
+        $("#retorno").append(mensagem("Informe a quantidade de dispositivos!", "info"));
+	}else if(data === ''){
+		// noinspection JSJQueryEfficiency
+        $("#retorno").empty();
+		// noinspection JSJQueryEfficiency
+        $("#retorno").append(mensagem("Informe uma data para o agendamento!", "warning"));
+	}else if(horaInicio === ''){
+		// noinspection JSJQueryEfficiency
+        $("#retorno").empty();
+		// noinspection JSJQueryEfficiency
+        $("#retorno").append(mensagem("Informe o horário inicial do agendamento!", "info"));
+	}else if(horaFim === ''){
+		// noinspection JSJQueryEfficiency
+        $("#retorno").empty();
+		// noinspection JSJQueryEfficiency
+        $("#retorno").append(mensagem("Informe o horário final do agendamento!", "warning"));
 	}else{
         $("#modalCarregando").modal('toggle');
 		$.post(
@@ -367,15 +398,19 @@ function insereAgd(idUser, idInst){
 			"agendar&qnt="+qnt+"&data="+data+"&horaInicio="+horaInicio+"&horaFim="+horaFim+"&idUser="+idUser+"&idInst="+idInst,
 			function (retorno) {
                 $("#modalCarregando").modal('toggle');
-				if(retorno == 'ok'){
-					$("#retorno").empty();
-					$("#retorno").append(mensagem("Agendamento realizado com sucesso!", "success"));
+				if(retorno === 'ok'){
+					// noinspection JSJQueryEfficiency
+                    $("#retorno").empty();
+					// noinspection JSJQueryEfficiency
+                    $("#retorno").append(mensagem("Agendamento realizado com sucesso!", "success"));
 					window.setTimeout(function(){
 						location.href="?page=agendamentos";
 					}, 2000);
 				}else{
-					$("#retorno").empty();
-					$("#retorno").append(mensagem("Não foi possível registrar o agendamento!<br>"+retorno, "danger"));
+					// noinspection JSJQueryEfficiency
+                    $("#retorno").empty();
+					// noinspection JSJQueryEfficiency
+                    $("#retorno").append(mensagem("Não foi possível registrar o agendamento!<br>"+retorno, "danger"));
 					window.setTimeout(function(){
 						location.reload();
 					}, 10000);
@@ -387,10 +422,14 @@ function insereAgd(idUser, idInst){
 }
 /*Insere uma instituicao no banco*/
 function insereInst(){
-	$("#retorno").empty();
-	var nome = $("#nome").val();
-	var endereco = $("#endereco").val();
-	var dispositivos = $("#dispositivos").val();
+	// noinspection JSJQueryEfficiency
+    $("#retorno").empty();
+	// noinspection JSJQueryEfficiency
+    var nome = $("#nome").val();
+	// noinspection JSJQueryEfficiency
+    var endereco = $("#endereco").val();
+	// noinspection JSJQueryEfficiency
+    var dispositivos = $("#dispositivos").val();
 
 	if(nome == ''){
 		$("#retorno").append(mensagem("Informe um nome para a instituição!", "info"));
@@ -425,7 +464,9 @@ function insereInst(){
 }
 /*--------FUNCOES DE UTILIZACAO GERAL---------*/
 function cancela(page){
+    // noinspection JSJQueryEfficiency
     $("#modalConfirma").modal('toggle');
+    // noinspection JSJQueryEfficiency
     $("#modalConfirma").on('shown.bs.modal', function () {
         $("#btnSimConfirmacao").click(function() {
             location.href="?page="+page;

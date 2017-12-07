@@ -2262,8 +2262,10 @@ var Modal = function ($) {
 
         // Adjust body padding
         var actualPadding = document.body.style.paddingRight;
-        var calculatedPadding = $('body').css('padding-right');
-        $('body').data('padding-right', actualPadding).css('padding-right', parseFloat(calculatedPadding) + this._scrollbarWidth + 'px');
+        // noinspection JSJQueryEfficiency
+          var calculatedPadding = $('body').css('padding-right');
+        // noinspection JSJQueryEfficiency
+          $('body').data('padding-right', actualPadding).css('padding-right', parseFloat(calculatedPadding) + this._scrollbarWidth + 'px');
       }
     };
 
@@ -2285,7 +2287,8 @@ var Modal = function ($) {
       });
 
       // Restore body padding
-      var padding = $('body').data('padding-right');
+      // noinspection JSJQueryEfficiency
+        var padding = $('body').data('padding-right');
       if (typeof padding !== 'undefined') {
         $('body').css('padding-right', padding).removeData('padding-right');
       }
